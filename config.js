@@ -43,8 +43,8 @@ const CONFIG = {
     address: "경기 용인시 수지구 신봉1로 344번길 1",
     tel: "031-266-7772",
     mapLinks: {
-      kakao: "https://place.map.kakao.com/1190936092/",
-      naver: "https://naver.me/FeXR23xO/"
+      kakao: "https://place.map.kakao.com/1190936092",
+      naver: "https://naver.me/FeXR23xO"
     }
   },
 
