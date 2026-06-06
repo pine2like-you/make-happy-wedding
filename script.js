@@ -457,6 +457,10 @@
     });
   }
 
+
+
+
+  
   /* ═══════════════════════════════════════════
      Gallery Section
      ═══════════════════════════════════════════ */
@@ -742,9 +746,7 @@
     $('#storyContent').textContent = CONFIG.story.content;
 
     // Auto-detect story and gallery images in parallel
-    const [storyImages, galleryImages] = await Promise.all([
-      loadImagesFromFolder('story'),
-      loadImagesFromFolder('gallery')
+    const galleryImages= await  loadImagesFromFolder('gallery')
     ]);
 
     // Render sections with discovered images
