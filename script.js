@@ -723,7 +723,7 @@
      Init
      ═══════════════════════════════════════════ */
 
-  async function init() {
+ async function init() {
     setMetaTags();
     initCurtain();
     initHero();
@@ -741,22 +741,22 @@
     initFooter();
     initScrollAnimations();
 
-    // Set story text immediately (photos load async)
-    $('#storyTitle').textContent = CONFIG.story.title;
-    $('#storyContent').textContent = CONFIG.story.content;
+    // ── 스토리 기능 제외 ──
+    // 스토리 관련 텍스트 및 이미지 로딩은 에러 방지를 위해 모두 건너뜁니다.
+    const storyPhotosContainer = $('#storyPhotos');
+    if (storyPhotosContainer) {
+      storyPhotosContainer.innerHTML = ''; // 로딩창 제거
+    }
+    const storySection = $('#story');
+    if (storySection) {
+      storySection.style.display = 'none'; // 스토리 섹션 숨김
+    }
 
-    // Auto-detect story and gallery images in parallel
-    const galleryImages= await  loadImagesFromFolder('gallery')
-    ]);
-
-    // Render sections with discovered images
-    initStory(storyImages);
-    initGallery(galleryImages);
+    // ── 갤러리 기능만 단독 실행 ──
+    try {
+      const galleryImages = await loadImagesFromFolder('gallery');
+      initGallery(galleryImages);
+    } catch (error) {
+      console.error("갤러리 이미지를 불러오는 중 오류 발생:", error);
+    }
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();
