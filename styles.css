@@ -626,48 +626,6 @@ a {
 }
 
 /* ═══════════════════════════════════════════
-   Story Section
-   ═══════════════════════════════════════════ */
-.story {
-  background:
-    radial-gradient(ellipse 350px 250px at 85% 30%, rgba(139,158,126,0.06) 0%, transparent 70%),
-    var(--color-cream);
-}
-
-.story__text {
-  font-size: 0.9375rem;
-  font-weight: 300;
-  line-height: 2;
-  color: var(--color-text-light);
-  white-space: pre-line;
-  margin-bottom: var(--spacing-xl);
-}
-
-.story__photos {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.story__photo-item {
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(74, 94, 59, 0.1);
-}
-
-.story__photo-item img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  transition: transform var(--transition-slow);
-}
-
-.story__photo-item:hover img {
-  transform: scale(1.03);
-}
-
-/* ═══════════════════════════════════════════
    Gallery Section
    ═══════════════════════════════════════════ */
 .gallery {
