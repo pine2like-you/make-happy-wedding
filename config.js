@@ -43,8 +43,8 @@ const CONFIG = {
     address: "경기 용인시 수지구 신봉1로 344번길 1",
     tel: "031-266-7772",
     mapLinks: {
-      kakao: "https://map.kakao.com/",
-      naver: "https://map.naver.com/"
+      kakao: "https://place.map.kakao.com/1190936092/",
+      naver: "https://naver.me/FeXR23xO/"
     }
   },
 
@@ -60,19 +60,21 @@ const CONFIG = {
     content: "서로 다른 길을 걷던 두 사람이\n하나의 길을 함께 걷게 되었습니다.\n\n여러분을 소중한 자리에 초대합니다."
   },
 
+
+
   // ── 오시는 길 ──
   // (mapLinks와 캘린더는 location 섹션 내에 포함)
 
   // ── 마음 전하실 곳 ──
   accounts: {
     groom: [
-      { role: "신랑", name: "전준석", bank: "국민은행", number: "000-000-000000" },
-      { role: "아버지", name: "전종복", bank: "신한은행", number: "000-000-000000" },
-      { role: "어머니", name: "박귀숙", bank: "우리은행", number: "000-000-000000" }
+      { role: "신랑", name: "전준석", bank: "신한은행", number: "110-273-748225" },
+      { role: "아버지", name: "전종복", bank: "신한은행", number: "110-029-686429" },
+      { role: "어머니", name: "박귀숙", bank: "신한은행", number: "110-029-686429" }
     ],
     bride: [
-      { role: "신부", name: "한솔", bank: "하나은행", number: "000-000-000000" },
-      { role: "아버지", name: "한현수", bank: "기업은행", number: "000-000-000000" },
+      { role: "신부", name: "한솔", bank: "농협은행", number: "302-1786-1820-21" },
+      { role: "아버지", name: "한현수", bank: "농협은행", number: "1031-2472-523" },
       { role: "어머니", name: "이숙", bank: "농협은행", number: "000-000-000000" }
     ]
   },
@@ -80,6 +82,6 @@ const CONFIG = {
   // ── 링크 공유 시 나타나는 문구 ──
   meta: {
     title: "신랑 ♥ 신부 결혼합니다",
-    description: "2022년 8월 22일, 소중한 분들을 초대합니다."
+    description: "2026년 8월 22일, 소중한 분들을 초대합니다."
   }
 };
