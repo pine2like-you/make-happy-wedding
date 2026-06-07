@@ -139,8 +139,6 @@
       </svg>
     </div>
 
-   
-
     <!-- ─── Gallery Section ─── -->
     <section class="section gallery" id="gallery">
       <div class="section__inner">
@@ -260,14 +258,22 @@
 
   </main>
 
-<audio id="bgm" loop preload="auto">
-  <source src="music/wedding.mp3" type="audio/mpeg">
-</audio>
+  <!-- ═══ Background Music (BGM) ═══ -->
+  <!-- 오디오 실제 주소 매칭 완료 -->
+  <audio id="bgm" src="audio/wedding.mp3.mp3" loop preload="auto"></audio>
 
-<button id="musicBtn" class="music-btn">
-  🎵
-</button>
-  
+  <!-- 스크립트와 제어 매칭용 ID bgmBtn 지정 및 사운드 아이콘 추가 완료 -->
+  <button id="bgmBtn" class="bgm-btn" aria-label="배경음악 켜고 끄기">
+    <!-- 음소거 상태 아이콘 (기본) -->
+    <svg class="icon-mute" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>
+    </svg>
+    <!-- 재생 상태 아이콘 -->
+    <svg class="icon-sound" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none;">
+      <path d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    </svg>
+  </button>
+    
   <script src="script.js"></script>
 </body>
 </html>
