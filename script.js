@@ -1,7 +1,7 @@
 /**
  * ═══════════════════════════════════════════
  * Nature Green Wedding Invitation
- * 커튼 먹통 에러 완벽 해결 보완본 (2026)
+ * 데이터 강제 바인딩 및 유실 방지 최종 스크립트 (2026)
  * ═══════════════════════════════════════════
  */
 
@@ -18,78 +18,87 @@ function showToast(message) {
 }
 
 // ───────────────────────────────────────────
-//  1. CONFIG 데이터 텍스트 및 이미지 매칭
+//  1. CONFIG 데이터 텍스트 및 이미지 매칭 (가장 안전한 방식)
 // ───────────────────────────────────────────
 function initConfigData() {
-  const cfg = window.CONFIG;
-  if (!cfg) return;
-
-  // [메타 태그 주입]
-  if ($('meta[property="og:title"]')) $('meta[property="og:title"]').setAttribute('content', cfg.meta.title);
-  if ($('meta[property="og:description"]')) $('meta[property="og:description"]').setAttribute('content', cfg.meta.description);
-  if ($('meta[property="og:image"]')) $('meta[property="og:image"]').setAttribute('content', 'images/og/1.jpg');
-
-  // [커튼 오프닝 이름]
-  if ($('#curtainNames')) {
-    $('#curtainNames').textContent = `${cfg.groom.name} & ${cfg.bride.name}`;
+  // 전역 CONFIG 객체 확보 (대소문자 및 윈도우 프로퍼티 체크)
+  const cfg = window.CONFIG || CONFIG;
+  if (!cfg) {
+    console.error("CONFIG 데이터를 찾을 수 없습니다. config.js 로드 여부를 확인하세요.");
+    return;
   }
 
-  // [히어로(메인) 영역]
-  if ($('#heroPhoto')) $('#heroPhoto').src = "images/hero/1.jpg";
-  if ($('#heroNames')) $('#heroNames').innerHTML = `${cfg.groom.name}<br>&<br>${cfg.bride.name}`;
-  
-  const dateParts = cfg.wedding.date.split('-');
-  if (dateParts.length === 3 && $('#heroDate')) {
-    $('#heroDate').textContent = `${dateParts[0]}년 ${parseInt(dateParts[1])}월 ${parseInt(dateParts[2])}일 ${cfg.wedding.time}`;
+  try {
+    // [메타 태그 주입]
+    if ($('meta[property="og:title"]')) $('meta[property="og:title"]').setAttribute('content', cfg.meta.title || "");
+    if ($('meta[property="og:description"]')) $('meta[property="og:description"]').setAttribute('content', cfg.meta.description || "");
+    if ($('meta[property="og:image"]')) $('meta[property="og:image"]').setAttribute('content', 'images/og/1.jpg');
+
+    // [커튼 오프닝 이름]
+    if ($('#curtainNames')) {
+      $('#curtainNames').textContent = `${cfg.groom.name} & ${cfg.bride.name}`;
+    }
+
+    // [히어로(메인) 영역]
+    if ($('#heroPhoto')) $('#heroPhoto').src = "images/hero/1.jpg";
+    if ($('#heroNames')) $('#heroNames').innerHTML = `${cfg.groom.name}<br>&<br>${cfg.bride.name}`;
+    
+    if (cfg.wedding && cfg.wedding.date) {
+      const dateParts = cfg.wedding.date.split('-');
+      if (dateParts.length === 3 && $('#heroDate')) {
+        $('#heroDate').textContent = `${dateParts[0]}년 ${parseInt(dateParts[1])}월 ${parseInt(dateParts[2])}일 ${cfg.wedding.time || ""}`;
+      }
+    }
+    if ($('#heroVenue') && cfg.wedding) $('#heroVenue').textContent = `${cfg.wedding.venue || ""} ${cfg.wedding.hall || ""}`;
+
+    // [인사말 영역]
+    if ($('#greetingTitle') && cfg.greeting) $('#greetingTitle').textContent = cfg.greeting.title || "";
+    if ($('#greetingContent') && cfg.greeting) $('#greetingContent').textContent = cfg.greeting.content || "";
+
+    // [오시는 길 영역]
+    if (cfg.wedding) {
+      if ($('#locationVenue')) $('#locationVenue').textContent = cfg.wedding.venue || "";
+      if ($('#locationHall')) $('#locationHall').textContent = cfg.wedding.hall || "";
+      if ($('#locationAddress')) $('#locationAddress').textContent = cfg.wedding.address || "";
+      if ($('#locationTel')) $('#locationTel').textContent = cfg.wedding.tel ? `Tel. ${cfg.wedding.tel}` : "";
+      if ($('#locationMapImg')) $('#locationMapImg').src = "images/location/1.jpg";
+
+      // 지도 앱 연결 링크
+      if ($('#kakaoMapBtn') && cfg.wedding.mapLinks) $('#kakaoMapBtn').href = cfg.wedding.mapLinks.kakao || "#";
+      if ($('#naverMapBtn') && cfg.wedding.mapLinks) $('#naverMapBtn').href = cfg.wedding.mapLinks.naver || "#";
+    }
+
+    // [푸터]
+    if ($('#footerText')) $('#footerText').textContent = `Copyright © ${cfg.groom.name} & ${cfg.bride.name}. All Rights Reserved.`;
+
+  } catch (e) {
+    console.error("데이터 매칭 중 오류 발생:", e);
   }
-  if ($('#heroVenue')) $('#heroVenue').textContent = `${cfg.wedding.venue} ${cfg.wedding.hall}`;
-
-  // [인사말 영역]
-  if ($('#greetingTitle')) $('#greetingTitle').textContent = cfg.greeting.title;
-  if ($('#greetingContent')) $('#greetingContent').textContent = cfg.greeting.content;
-
-  // [오시는 길 영역]
-  if ($('#locationVenue')) $('#locationVenue').textContent = cfg.wedding.venue;
-  if ($('#locationHall')) $('#locationHall').textContent = cfg.wedding.hall;
-  if ($('#locationAddress')) $('#locationAddress').textContent = cfg.wedding.address;
-  if ($('#locationTel')) $('#locationTel').textContent = `Tel. ${cfg.wedding.tel}`;
-  if ($('#locationMapImg')) $('#locationMapImg').src = "images/location/1.jpg";
-
-  // 지도 앱 연결 링크
-  if ($('#kakaoMapBtn')) $('#kakaoMapBtn').href = cfg.wedding.mapLinks.kakao;
-  if ($('#naverMapBtn')) $('#naverMapBtn').href = cfg.wedding.mapLinks.naver;
-
-  // [푸터]
-  if ($('#footerText')) $('#footerText').textContent = `Copyright © ${cfg.groom.name} & ${cfg.bride.name}. All Rights Reserved.`;
 }
 
 // ───────────────────────────────────────────
-//  2. 커튼 오프닝 제어 (★ 무조건 열리도록 전면 개조)
+//  2. 커튼 오프닝 제어
 // ───────────────────────────────────────────
 function initCurtain() {
-  const curtain = $('#curtain') || $('.curtain'); // ID와 클래스명 둘 다 탐색
+  const curtain = $('#curtain') || $('.curtain');
   const bgm = document.getElementById('bgm');
   const btn = $('#bgmBtn') || $('.music-btn');
-  const cfg = window.CONFIG;
+  const cfg = window.CONFIG || CONFIG;
 
   if (!curtain) return;
 
-  // CONFIG에서 커튼을 안 쓰겠다고 한 경우 패스
   if (cfg && cfg.useCurtain === false) {
     curtain.style.display = 'none';
     document.body.classList.remove('no-scroll');
     return;
   }
 
-  // 초기 상태 스크롤 방지
   document.body.classList.add('no-scroll');
 
-  // 커튼을 여는 핵심 실행 함수
   const openCurtain = () => {
     curtain.classList.add('is-open');
     document.body.classList.remove('no-scroll');
 
-    // 배경음악 자동 재생 시도
     if (bgm && btn) {
       bgm.play().then(() => {
         btn.classList.add('is-playing');
@@ -101,25 +110,19 @@ function initCurtain() {
       });
     }
 
-    // 완전히 사라지게 처리
     setTimeout(() => { 
       curtain.style.display = 'none';
       curtain.classList.add('is-hidden'); 
     }, 1200);
   };
 
-  // 💡 [해결책] HTML에 버튼 ID가 뭐로 되어있든 작동하도록 유연하게 감지
   const anyBtn = curtain.querySelector('button') || $('#curtainBtn') || $('.curtain__btn');
-  
   if (anyBtn) {
-    // 버튼이 존재하면 버튼 클릭 시 오픈
     anyBtn.addEventListener('click', (e) => {
-      e.stopPropagation(); // 이벤트 전파 방지
+      e.stopPropagation();
       openCurtain();
     });
   }
-  
-  // 예외 보완: 버튼을 못 찾거나 빗나갈 경우를 대비해 커튼 화면 자체를 눌러도 열리게 처리
   curtain.addEventListener('click', openCurtain);
 }
 
@@ -160,8 +163,8 @@ function initBGM() {
 // ───────────────────────────────────────────
 function initCountdown() {
   const countdown = $('#countdown');
-  const cfg = window.CONFIG;
-  if (!countdown || !cfg) return;
+  const cfg = window.CONFIG || CONFIG;
+  if (!countdown || !cfg || !cfg.wedding) return;
 
   const weddingTarget = new Date(`${cfg.wedding.date}T${cfg.wedding.time}:00+09:00`).getTime();
 
@@ -199,10 +202,11 @@ function initCountdown() {
 // ───────────────────────────────────────────
 function initGreetingParents() {
   const container = $('#greetingParents');
-  const cfg = window.CONFIG;
+  const cfg = window.CONFIG || CONFIG;
   if (!container || !cfg) return;
 
   const makeRow = (parent, name, title) => {
+    if (!parent) return '';
     const fStr = parent.father ? (parent.fatherDeceased ? `故 ${parent.father}` : parent.father) : '';
     const mStr = parent.mother ? (parent.motherDeceased ? `故 ${parent.mother}` : parent.mother) : '';
     const parentName = (fStr && mStr) ? `${fStr} · ${mStr}` : (fStr || mStr);
@@ -217,7 +221,8 @@ function initGreetingParents() {
     `;
   };
 
-  container.innerHTML = makeRow(cfg.groom, cfg.groom.name, '장남') + makeRow(cfg.bride, cfg.bride.name, '장녀');
+  container.innerHTML = makeRow(cfg.groom, cfg.groom ? cfg.groom.name : "", '장남') + 
+                        makeRow(cfg.bride, cfg.bride ? cfg.bride.name : "", '장녀');
 }
 
 // ───────────────────────────────────────────
@@ -252,7 +257,7 @@ function initPhotoModal() {
   let currentIndex = 0;
 
   setTimeout(() => {
-    const activeItems = Array.from($微('.gallery__item') || $$('.gallery__item')).filter(el => el.style.display !== 'none');
+    const activeItems = Array.from($$('.gallery__item')).filter(el => el.style.display !== 'none');
     validImages = activeItems.map(el => el.querySelector('img').src);
     activeItems.forEach((el, idx) => {
       el.setAttribute('data-index', idx);
@@ -294,8 +299,8 @@ function initPhotoModal() {
 //  7. 축의금 목록 바인딩 및 아코디언 확장
 // ───────────────────────────────────────────
 function initAccounts() {
-  const cfg = window.CONFIG;
-  if (!cfg) return;
+  const cfg = window.CONFIG || CONFIG;
+  if (!cfg || !cfg.accounts) return;
 
   const renderSide = (targetId, list) => {
     const container = $(`#${targetId}`);
@@ -362,7 +367,8 @@ function initLocationCopy() {
   if (!btn) return;
 
   btn.addEventListener('click', () => {
-    const addr = window.CONFIG ? window.CONFIG.wedding.address : '';
+    const cfg = window.CONFIG || CONFIG;
+    const addr = (cfg && cfg.wedding) ? cfg.wedding.address : '';
     navigator.clipboard.writeText(addr).then(() => {
       showToast('주소가 복사되었습니다');
     });
@@ -389,17 +395,23 @@ function initScrollAnimations() {
 }
 
 // ───────────────────────────────────────────
-//  전체 프로세스 메인 기동 시퀀스
+//  안전 주입 실행 시퀀스 (루프 에러 방지)
 // ───────────────────────────────────────────
-function init() {
+function mainLauncher() {
   initConfigData();       
-  initCurtain();          // 👈 개선된 커튼 로직 기동
+  initCurtain();          
   initBGM();              
   initCountdown();        
   initGreetingParents();  
   initPhotoModal();       
+  initAccounts(); // 👈 누락 가능성 있었던 계좌 초기화 바인딩 강제 재호출
   initLocationCopy();     
   initScrollAnimations();  
 }
 
-document.addEventListener('DOMContentLoaded', init);
+// DOM 가동 및 로드 상태에 따른 완벽한 방어 코드
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', mainLauncher);
+} else {
+  mainLauncher();
+}
