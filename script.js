@@ -781,3 +781,24 @@
     init();
   }
 })();
+
+const bgm = document.getElementById('bgm');
+const musicBtn = document.getElementById('musicBtn');
+
+const curtainBtn = document.getElementById('curtainBtn');
+
+if (curtainBtn) {
+  curtainBtn.addEventListener('click', () => {
+    bgm.play().catch(() => {});
+  });
+}
+
+musicBtn.addEventListener('click', () => {
+  if (bgm.paused) {
+    bgm.play();
+    musicBtn.textContent = '🎵';
+  } else {
+    bgm.pause();
+    musicBtn.textContent = '🔇';
+  }
+});
