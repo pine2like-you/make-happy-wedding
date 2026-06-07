@@ -1221,33 +1221,66 @@ a {
    Background Music (BGM) Button Style
    ═══════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════
+   Background Music (BGM) Button Style
+   ═══════════════════════════════════════════ */
+
 .music-btn {
   position: fixed;
   right: 20px;
   /* 아이폰 하단 홈바(Safe Area)와 토스트 알림을 고려해 살짝 위로 조정 */
-  bottom: calc(5rem + var(--safe-bottom)); 
-  width: 50px;
-  height: 50px;
-  border: 1px solid rgba(139, 158, 126, 0.3); /* 청첩장 세이지 그린 톤 적용 */
+  bottom: calc(5.5rem + var(--safe-bottom)); 
+  
+  /* 버튼 전체 크기를 확실하게 키움 (터치 오작동 방지) */
+  width: 54px;
+  height: 54px;
+  
+  border: 1px solid rgba(139, 158, 126, 0.4); /* 세이지 그린 톤 살짝 선명하게 */
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.95);
-  font-size: 1.25rem;
-  cursor: pointer;
-  z-index: 9999;
-  box-shadow: 0 4px 15px rgba(74, 94, 59, 0.15);
+  
+  /* 정중앙 정렬 보장 */
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  
+  z-index: 9999;
+  box-shadow: 0 4px 15px rgba(74, 94, 59, 0.15);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* 버튼 내부 아이콘(SVG나 i태그 등) 크기 강제 제어 */
+.music-btn svg,
+.music-btn i,
+.music-btn img {
+  width: 24px !important;  /* 아이콘 크기를 시원하게 확대 */
+  height: 24px !important;
+  fill: var(--color-forest); /* 네이처 그린 테마 컬러 연동 */
+  color: var(--color-forest);
 }
 
 .music-btn:active {
   transform: scale(0.92);
 }
 
+/* [선택사항] 음악 재생 중일 때 잔잔하게 회전하는 효과 */
+.music-btn.is-playing {
+  animation: rotateMusicBtn 10s linear infinite;
+  background: #ffffff;
+  border-color: var(--color-sage);
+}
+
+@keyframes rotateMusicBtn {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* 데스크탑 화면(웹)에서 청첩장 본문 우측 가장자리에 예쁘게 붙도록 설정 */
 @media (min-width: 1024px) {
   .music-btn {
-    right: calc(50% - 240px + 20px); /* 480px 레이아웃의 우측 정렬 */
+    /* 480px 레이아웃 우측 가장자리에 딱 떨어지도록 보정 (버튼 크기 늘어난 만큼 계산 조정) */
+    right: calc(50% - 240px + 16px); 
+    bottom: calc(2rem + var(--safe-bottom)); /* 데스크탑에선 아래쪽 여백 안정적으로 하향 */
   }
 }
