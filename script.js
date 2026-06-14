@@ -239,7 +239,7 @@ function initPhotoModal() {
 
   if (!modal || !grid) return;
 
-  const maxSearchCount = 12; 
+  const maxSearchCount = 15; 
   let validImages = [];
   let htmlBuffer = "";
 
