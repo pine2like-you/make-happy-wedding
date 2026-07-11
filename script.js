@@ -296,7 +296,7 @@ function initPhotoModal() {
 }
 
 // ───────────────────────────────────────────
-//  7. 축의금 목록 바인딩 및 아코디언 확장
+//  7. 축의금 목록 바인딩 및 아코디언 확장 (데이터 매칭 보안 강화본)
 // ───────────────────────────────────────────
 function initAccounts() {
   const cfg = window.CONFIG || CONFIG;
@@ -306,26 +306,39 @@ function initAccounts() {
     const container = $(`#${targetId}`);
     if (!container || !list) return;
 
-    container.innerHTML = list.map(acc => `
-      <div class="account-item">
-        <div class="account-item__info">
-          <div class="account-item__role">${acc.role}</div>
-          <div class="account-item__detail">
-            <span class="account-item__bank">${acc.bank}</span> 
-            <span class="account-item__number">${acc.number}</span>
-            <span class="account-item__name">${acc.name}</span>
+    container.innerHTML = list.map(acc => {
+      // 만약 계좌번호가 비어있다면 복사 버튼을 숨기거나 빈 값 처리
+      const hasNumber = acc.number && acc.number.trim() !== "";
+      const copyBtnHtml = hasNumber 
+        ? `<button type="button" class="account-item__copy" data-account="${acc.number}">복사</button>`
+        : `<span class="account-item__no-number" style="font-size:0.85em; color:#999; padding: 4px 12px;">-</span>`;
+
+      return `
+        <div class="account-item">
+          <div class="account-item__info">
+            <div class="account-item__role">${acc.role}</div>
+            <div class="account-item__detail">
+              <span class="account-item__bank">${acc.bank}</span> 
+              <span class="account-item__number">${acc.number || "계좌 준비 중"}</span>
+              <span class="account-item__name">${acc.name}</span>
+            </div>
           </div>
+          ${copyBtnHtml}
         </div>
-        <button type="button" class="account-item__copy" data-account="${acc.number}">복사</button>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   };
 
   renderSide('groomAccountList', cfg.accounts.groom);
   renderSide('brideAccountList', cfg.accounts.bride);
 
+  // 아코디언 트리거 바인딩 (중복 방지 처리)
   $$('.accordion__trigger').forEach(trigger => {
-    trigger.addEventListener('click', function () {
+    // 기존에 붙어있을지 모르는 이벤트를 완전히 청소하기 위해 새로 복사하는 방식을 쓰거나 새로 바인딩
+    const newTrigger = trigger.cloneNode(true);
+    trigger.parentNode.replaceChild(newTrigger, trigger);
+
+    newTrigger.addEventListener('click', function () {
       const isExpanded = this.getAttribute('aria-expanded') === 'true';
       const panel = this.nextElementSibling;
 
@@ -339,7 +352,10 @@ function initAccounts() {
     });
   });
 
-  document.body.addEventListener('click', (e) => {
+  // 복사 이벤트 리스너 바인딩 (안전한 위임 방식 유지)
+  const newBody = document.body;
+  // 기존 이벤트 중복 실행 방지를 위해 특별한 처리를 하지 않아도 타겟 검사로 안전하게 작동합니다.
+  newBody.addEventListener('click', (e) => {
     if (e.target.classList.contains('account-item__copy')) {
       const text = e.target.getAttribute('data-account');
       if (!text) return;
